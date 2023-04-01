@@ -1,0 +1,13 @@
+(def slice
+     (func (l beg end)
+           (def slice_
+                (func (l_ beg_ end_)
+                      (if (>= beg_ end_)
+                          ()
+                          (append (slice_ l_ (+ beg_ 1) end_)
+                                  (index l_ beg_)))))
+           (def beg (if (< beg 0) (+ (len l) beg) beg))
+           (def end (if (= end ()) (len l) (if (< end 0) (+ (len l) end) end)))
+           (if (= l ())
+               ()
+               (reverse (slice_ l beg end)))))

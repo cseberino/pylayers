@@ -1,0 +1,20 @@
+Pylayers
+
+a parser, compiler, assembler and processor entirely in Python for Python
+
+Pylayers is a teaching tool to learn about computer software and hardware.
+Python programs are analyzed and executed.  To analyze and execute a Python
+program, run the following command:
+
+        pylayers <Python program>
+
+This will generate the following files:
+
+        abstract syntax tree    file
+        intermediate code       file
+        assembly with    macros file
+        assembly without macros file
+        machine code            file
+        program output          file
+
+See the source code and other computer resources for further details.

@@ -1,0 +1,9 @@
+(def zip
+     (func (l1 l2)
+           (def zip_
+                (func (l1_ l2_)
+                      (if (or (!= (len l1_) (len l2_)) (= l1_ ()))
+                          ()
+                          (append (zip_ (rest  l1_) (rest  l2_))
+                                  (list (first l1_) (first l2_))))))
+           (reverse (zip_ l1 l2))))

@@ -1,0 +1,1 @@
+(def xor (func (a b) (if a (if (not b) True False) (if b True False))))

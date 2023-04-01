@@ -1,0 +1,10 @@
+(def filter
+     (func (f l)
+           (if (atom l)
+               (noeval)
+               (block (def l_ ())
+                      (for e l
+                           (if (f e)
+                               (def l_ (append l_ e))
+                               ()))
+                      l_))))

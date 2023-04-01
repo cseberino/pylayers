@@ -1,0 +1,7 @@
+(def index
+     (func (l i)
+           (if (= i 0)
+               (first l)
+               (if (> i 0)
+                   (index (rest l) (- i 1))
+                   (index l        (+ (len l) i))))))

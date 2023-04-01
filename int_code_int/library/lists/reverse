@@ -1,0 +1,5 @@
+(def reverse
+     (func (l)
+           (if (= l ())
+               ()
+               (append (reverse (rest l)) (first l)))))

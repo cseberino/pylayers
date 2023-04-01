@@ -1,0 +1,6 @@
+(def reduce
+     (func (f l)
+           (def result (f (first l) (second l)))
+           (for e (rest (rest l))
+                (def result (f result e)))
+           result))

@@ -1,0 +1,3 @@
+(cd ./parser_gen_tests   && ./tests)
+(cd ./int_code_gen_tests && ./tests.py)
+(cd ./int_code_int_tests && ./tests.py)

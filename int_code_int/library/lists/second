@@ -1,0 +1,1 @@
+(def second (func (l) (index l 1)))

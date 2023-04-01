@@ -1,0 +1,1 @@
+(def >= (func (a b) (or (> a b) (= a b))))

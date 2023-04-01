@@ -1,0 +1,3 @@
+(macro or (a b)
+       (append (append (append (noeval (if)) a) True) (append (append (append
+       (noeval (if)) b) True) False)))

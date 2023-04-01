@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+
+import ast.parser
+import int_code_gen
+import sys
+
+if len(sys.argv) != 2:
+        print("Usage: pylayers <Python program>")
+        sys.exit(0)
+
+program  = open(sys.argv[1]).read()
+ast      = ast.parser.parser(program)
+int_code = int_code_gen.int_code_gen(ast)
+open(sys.argv[1] + ".ast", "w").write(str(ast))
+open(sys.argv[1] + ".int", "w").write(str(int_code))

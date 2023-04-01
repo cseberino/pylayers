@@ -1,0 +1,7 @@
+(def -
+     (func args
+           (if (= (len args) 1)
+               (negate (first args))
+               (if (= (len args) 2)
+                   (+ (first args) (- (first (rest args))))
+                   (noeval)))))

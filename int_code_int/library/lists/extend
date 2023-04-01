@@ -1,0 +1,8 @@
+(def extend
+     (func (l ext)
+           (def extend_
+                (func (l_ ext_)
+                      (if (= ext_ ())
+                          l_
+                          (append (extend_ l_ (rest ext_)) (first ext_)))))
+           (extend_ l (reverse ext))))

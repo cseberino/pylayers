@@ -1,0 +1,5 @@
+(def len
+     (func (l)
+           (if (= l ())
+               0
+               (+ (len (rest l)) 1))))

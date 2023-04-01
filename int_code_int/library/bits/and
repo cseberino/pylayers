@@ -1,0 +1,12 @@
+(def &
+     (func (a b)
+           (def result 0)
+           (def power  1)
+           (while (or a b)
+                  (if (and (% a 2) (% b 2))
+                      (def result (+ result power))
+                      0)
+                  (def power (*  power 2))
+                  (def a     (>> a     1))
+                  (def b     (>> b     1)))
+           result))

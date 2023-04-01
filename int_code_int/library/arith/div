@@ -1,0 +1,9 @@
+(def /
+     (func (a b)
+           (if (= b 0)
+               (noeval)
+               (if (< (abs a) (abs b))
+                   0
+                   (if (or (and (>= a 0) (>= b 0)) (and (<= a 0) (<= b 0)))
+                       (+ (/ (- (abs a) (abs b)) (abs b)) 1)
+                       (- (/ (abs a) (abs b))))))))

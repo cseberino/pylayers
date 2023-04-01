@@ -1,0 +1,8 @@
+(def range
+     (func (beg end step)
+           (def range_
+                (func (beg_ end_ step_)
+                      (if ((if (> step_ 0) < >) beg_ end_)
+                          (append (range_ (+ beg_ step_) end_ step_) beg_)
+                          ())))
+           (reverse (range_ beg end step))))

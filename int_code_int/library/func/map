@@ -1,0 +1,8 @@
+(def map
+     (func (f l)
+           (def map_
+                (func (f_ l_)
+                      (if (= l_ ())
+                          ()
+                          (append (map_ f_ (rest l_)) (f_ (first l_))))))
+           (map_ f (reverse l))))
