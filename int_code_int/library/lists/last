@@ -1,1 +1,0 @@
-(def last (func (l) (index l -1)))

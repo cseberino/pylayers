@@ -1,4 +1,0 @@
-(def % (func (a b)
-             (def result (- a (* b (/ a b))))
-             (if (< result 0) (def result (+ result b)) ())
-             result))

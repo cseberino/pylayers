@@ -1,3 +1,0 @@
-(macro and (a b)
-       (append (append (append (noeval (if)) a) (append (append (append (noeval
-       (if)) b) True) False)) False))

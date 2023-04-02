@@ -1,1 +1,0 @@
-(def block (func args (if (= args ()) () (last args))))
