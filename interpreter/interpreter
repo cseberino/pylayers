@@ -1,0 +1,153 @@
+#!/usr/bin/env python3
+
+"""
+Copyright 2025 Christian Seberino
+
+This file is part of Pylayers.
+
+Pylayers is free software: you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+Pylayers is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+Pylayers. If not, see <https://www.gnu.org/licenses/>.
+
+________________________________________________________________________________
+
+
+Contains the interpreter.
+
+Executes intermediate code in files.  The intermediate code is in a language
+that is a minimal variant of the Lisp language.  Programs contain expressions
+which are atoms or lists.  Atoms are booleans, integers, strings, variables,
+functions and macros.  Lists can contain other lists.  Running programs is
+evaluating expressions.  Evaluating atoms, except for variables, returns them.
+Evaluating variables involves environments.  Evaluating lists involves function
+or macro invocations.  All functions in the language are implemented in the
+language except for the following:
+
+        quote
+        if
+        set
+        func
+        macro
+        equal
+        atom
+        first
+        rest
+        append
+        add
+        negate
+        gt
+
+The first five functions involve special evaluation procedures.  See Lisp
+resources for further details.
+"""
+
+import eval_
+import re
+import sys
+import os
+
+IGNORE_RE = r"(\s|#[^\n]*\n)*"
+BOOL_RE   = r"True|False"
+INT_RE    = r"\-?\d+"
+TOKEN_RE  = r'\(|\)|"[^"]*"|[^"\(\)\s]+'
+LIBRARY   = os.path.dirname(os.path.realpath(__file__)) + "/library"
+
+def tokenizer(program):
+        """
+        Converts programs to tokens.
+
+        The tokens are booleans, integers, strings, variables and parentheses.
+        """
+
+        tokens = []
+        index  = 0
+        while index < len(program):
+                index += len(re.match(IGNORE_RE, program[index:]).group(0))
+                token  = re.match(TOKEN_RE, program[index:])
+                if token:
+                        tokens.append(token.group(0))
+                        index += len(token.group(0))
+
+        return tokens
+
+def parser(tokens):
+        """
+        Converts tokens to abstract syntax trees.
+
+        Abtract syntax trees are lists of expression representations.
+        """
+
+        def exp(tokens):
+                token = tokens.pop(0)
+                if token == "(":
+                        exp_ = []
+                        while tokens and (tokens[0] != ")"):
+                                exp_.append(exp(tokens))
+                        tokens.pop(0)
+                else:
+                        if   re.fullmatch(BOOL_RE, token):
+                                exp_ = True if token == "True" else False
+                        elif re.fullmatch(INT_RE,  token):
+                                exp_ = int(token)
+                        elif token[0] == token[-1] == '"':
+                                exp_ = token[1:-1]
+                        else:
+                                exp_ = (token,)
+
+                return exp_
+
+        ast = []
+        while tokens:
+                ast.append(exp(tokens))
+
+        return ast
+
+def print_(exp):
+        """
+        Prints expressions.
+
+        Transforms internal expression representations.
+        """
+
+        def transform(exp):
+                exp_ = str(exp)
+                if   isinstance(exp, str):
+                        exp_ = f'"{exp}"'
+                elif isinstance(exp, tuple):
+                        exp_ = exp[0]
+                elif isinstance(exp, list):
+                        exp_ = f"({' '.join([transform(e) for e in exp])})"
+
+                return exp_
+
+        print(transform(exp))
+
+def make_env():
+        """
+        Creates the environment.
+
+        Installs the library.
+        """
+
+        env = [e for e in dir(eval_) if e.startswith("eval_")]
+        env = {(e[len("eval_"):],) : getattr(eval_, e) for e in env}
+        for folder, _, files in os.walk(LIBRARY):
+                for file in files:
+                        with open(os.path.join(folder, file)) as f:
+                                for e in parser(tokenizer(f.read())):
+                                        eval_.eval_(e, env)
+
+        return env
+
+env = make_env()
+with open(sys.argv[1]) as f:
+        for e in parser(tokenizer(f.read())):
+                print_(eval_.eval_(e, env))

@@ -1,0 +1,37 @@
+# Copyright 2020 Christian Seberino
+#
+# This file is part of Crux.
+#
+# Crux is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# Crux is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# Crux. If not, see <https://www.gnu.org/licenses/>.
+#
+# ______________________________________________________________________________
+#
+#
+# Implements part of the library.
+#
+# Added to the environment.
+
+(set slice
+     (func (l beg end)
+           (if (= l ())
+               ()
+               (if (= end ())
+                   (slice l beg (len l))
+                   (if (< beg 0)
+                       (slice l (+ (len l) beg) end)
+                       (if (< end 0)
+                           (slice l beg (+ (len l) end))
+                           (if (>= beg end)
+                               ()
+                               (prepend (index l beg)
+                                        (slice l (+ beg 1) end)))))))))

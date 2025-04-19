@@ -1,0 +1,28 @@
+# Copyright 2020 Christian Seberino
+#
+# This file is part of Crux.
+#
+# Crux is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# Crux is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# Crux. If not, see <https://www.gnu.org/licenses/>.
+#
+# ______________________________________________________________________________
+#
+#
+# Implements part of the library.
+#
+# Added to the environment.
+
+(set reduce
+     (func (f l)
+           (if (= (len l) 2)
+               (f (first l) (second l))
+               (f (first l) (reduce f (rest l))))))
