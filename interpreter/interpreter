@@ -60,6 +60,10 @@ INT_RE    = r"\-?\d+"
 TOKEN_RE  = r'\(|\)|"[^"]*"|[^"\(\)\s]+'
 LIBRARY   = os.path.dirname(os.path.realpath(__file__)) + "/library"
 
+if len(sys.argv) != 2:
+        print("Usage: ./interpreter <intermediate code file>")
+        sys.exit(0)
+
 def tokenizer(program):
         """
         Converts programs to tokens.
