@@ -35,7 +35,8 @@ if len(sys.argv) != 2:
         sys.exit(0)
 
 with open(sys.argv[1]) as f:
-        tokens   = tokenizer.tokenizer(f.read())
-        ast      = parser.parser(tokens)
-        int_code = int_code_gen.int_code_gen(ast)
+        source_code = f.read()
+        tokens      = tokenizer.tokenizer(source_code)
+        ast         = parser.parser(tokens)
+        int_code    = int_code_gen.int_code_gen(ast)
         print(int_code)
