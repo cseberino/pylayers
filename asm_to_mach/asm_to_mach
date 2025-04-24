@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+
+"""
+Copyright 2025 Christian Seberino
+
+This file is part of Pylayers.
+
+Pylayers is free software: you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+Pylayers is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+Pylayers. If not, see <https://www.gnu.org/licenses/>.
+
+________________________________________________________________________________
+
+
+Contains a script that converts assembly code to machine code
+
+Relies on the assembler.
+"""
+
+import assembler
+import sys
+
+if len(sys.argv) != 2:
+        print("Usage: ./asm_to_mach <assembly code file>")
+        sys.exit(0)
+
+with open(sys.argv[1]) as f:
+        assembly_code = f.read()
+        machine_code  = assembler.assembler(assembly_code)
+        print(machine_code)
