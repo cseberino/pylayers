@@ -31,7 +31,7 @@ import int_code_gen
 import sys
 
 if len(sys.argv) != 2:
-        print("Usage: ./int_code <source code file>")
+        print("Usage: ./source_to_int <source code file>")
         sys.exit(0)
 
 with open(sys.argv[1]) as f:
