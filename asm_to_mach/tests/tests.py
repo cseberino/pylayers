@@ -33,7 +33,9 @@ def mach_code(program):
         with open("__program__", "w") as f:
                 f.write(program)
         mach_code_ = subprocess.check_output(["../asm_to_mach", "__program__"])
-        mach_code_ = bytes.fromhex(mach_code_.decode())
+        mach_code_ = [e for e in mach_code_.decode().split("\n") if e]
+        mach_code_ = "".join([hex(int(e, 2))[2:].zfill(8) for e in mach_code_])
+        mach_code_ = bytes.fromhex(mach_code_)
         os.remove("__program__")
 
         return mach_code_
