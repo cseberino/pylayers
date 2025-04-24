@@ -21,21 +21,18 @@ ________________________________________________________________________________
 Contains the assembler.
 
 Converts assembly code into machine code.  Assembly code and machine code are
-composed of instructions and data.  Assembly code has one instruction or datum
-per line.  Assembly code lines may also have labels.  Each assembly code
-instruction will be converted to a machine code instruction.  Both assembly code
+composed of instructions and data.  Assembly code and machine code have one
+instruction or datum per line.  Assembly code lines may also have labels.  Each
+assembly code line will be converted to a machine code line.  Both assembly code
 and machine code instructions are composed of commands and their arguments.
-Command arguments can be data or computer registers.  Computer registers are
-devices to store data.  Machine code instructions are composed of 32 zeroes and
-ones or 32 bits.  Assembly code data is converted to 32 bits in machine code.
-Machine code is given in 32 bit sections which is also how it is also stored in
-computer memory.  Four bits are referred to as a nibble.  Eight bits are
-referred to as a byte.  32 bits are referred to as a word.  Different computers
-may have different word sizes.  In addition to providing machine code words as
-bits, hexadecimal word representations are also provided.  Hexadecimal is a
-compact bit representation composed of digits and the letters a through f.  All
-characters in hexadecimal representations represent nibbles.  All sizes in the
-assembler are given in bytes.
+Command arguments can be data or computer registers where computer registers are
+devices that store data.  Machine code lines are composed of 32 bits or 32
+zeroes and ones as well as their hexadecimal representations.  Four bits are
+referred to as a nibble.  Eight bits are referred to as a byte.  32 bits are
+referred to as a word but different computers may have different word sizes.
+Hexadecimal is a compact representation composed of digits and the first six
+letters where each represents a nibble.  All sizes in the assembler are given in
+bytes.
 """
 
 CMDS      = ["add", "sub", "mult", "div", "and", "or", "zjump", "gjump",
