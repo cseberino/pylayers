@@ -33,15 +33,12 @@ def mach_code(program):
         with open("__program__", "w") as f:
                 f.write(program)
         mach_code_ = subprocess.check_output(["../asm_to_mach", "__program__"])
-        mach_code_ = [e for e in mach_code_.decode().split("\n") if e]
-        mach_code_ = "".join([hex(int(e, 2))[2:].zfill(8) for e in mach_code_])
-        mach_code_ = bytes.fromhex(mach_code_)
         os.remove("__program__")
 
         return mach_code_
 
 class Tester(unittest.TestCase):
-        def test_add_assem(self):
+        def test_add(self):
                 program = \
 """
 add r2 r3 r4
@@ -53,7 +50,7 @@ add r6 r1 r2
                 answer  = bytes.fromhex(answer)
                 self.assertEqual(output, answer)
 
-        def test_sub_assem(self):
+        def test_sub(self):
                 program = \
 """
 sub r2 r3 r4
@@ -65,11 +62,11 @@ sub r6 r1 r2
                 answer  = bytes.fromhex(answer)
                 self.assertEqual(output, answer)
 
-        def test_mult_assem(self):
+        def test_mul(self):
                 program = \
 """
-mult r2 r3 r4
-mult r6 r1 r2
+mul r2 r3 r4
+mul r6 r1 r2
 """
                 output  = mach_code(program)
                 answer  = "22340000"
@@ -77,7 +74,7 @@ mult r6 r1 r2
                 answer  = bytes.fromhex(answer)
                 self.assertEqual(output, answer)
 
-        def test_div_assem(self):
+        def test_div(self):
                 program = \
 """
 div r2 r3 r4
@@ -89,7 +86,7 @@ div r6 r1 r2
                 answer  = bytes.fromhex(answer)
                 self.assertEqual(output, answer)
 
-        def test_and_assem(self):
+        def test_and(self):
                 program = \
 """
 and r2 r3 r4
@@ -101,7 +98,7 @@ and r6 r1 r2
                 answer  = bytes.fromhex(answer)
                 self.assertEqual(output, answer)
 
-        def test_or_assem(self):
+        def test_or(self):
                 program = \
 """
 or r2 r3 r4
@@ -113,7 +110,7 @@ or r6 r1 r2
                 answer  = bytes.fromhex(answer)
                 self.assertEqual(output, answer)
 
-        def test_zjump_assem(self):
+        def test_zjump(self):
                 program = \
 """
 zjump r1 r4
@@ -125,7 +122,7 @@ zjump r8 r7
                 answer  = bytes.fromhex(answer)
                 self.assertEqual(output, answer)
 
-        def test_gjump_assem(self):
+        def test_gjump(self):
                 program = \
 """
 gjump r1 r4 r11
@@ -137,7 +134,7 @@ gjump r8 r7 r3
                 answer  = bytes.fromhex(answer)
                 self.assertEqual(output, answer)
 
-        def test_copy_assem(self):
+        def test_copy(self):
                 program = \
 """
 copy 15       r6
@@ -153,7 +150,7 @@ copy 0xaabbcc r4
                 answer  = bytes.fromhex(answer)
                 self.assertEqual(output, answer)
 
-        def test_load_assem(self):
+        def test_load(self):
                 program = \
 """
 load r2 r3
@@ -165,7 +162,7 @@ load r6 r1
                 answer  = bytes.fromhex(answer)
                 self.assertEqual(output, answer)
 
-        def test_store_assem(self):
+        def test_store(self):
                 program = \
 """
 store r2 r3
@@ -177,7 +174,7 @@ store r6 r1
                 answer  = bytes.fromhex(answer)
                 self.assertEqual(output, answer)
 
-        def test_stop_assem(self):
+        def test_stop(self):
                 program = \
 """
 stop
@@ -189,15 +186,25 @@ stop
                 answer  = bytes.fromhex(answer)
                 self.assertEqual(output, answer)
 
-        def test_comments_assem(self):
+        def test_blanks_and_comments(self):
                 program = \
 """
+
 # This is comment #1.
+
 add r2 r3 r4
+
 # This is comment #2.
+
 # This is comment #3.
+
+
+
 copy 16724940 r2
+
+
 # This is comment #4.
+
 
 """
                 output  = mach_code(program)
@@ -206,22 +213,31 @@ copy 16724940 r2
                 answer  = bytes.fromhex(answer)
                 self.assertEqual(output, answer)
 
-        def test_labels_assem(self):
+        def test_labels(self):
                 program = \
 """
 # This comment and blank lines should not affect labels.
 
+
          add r2 r3 r4
+
          add r6 r1 r2
+
 
 label_1: sub r2 r3 r4
          add r2 r3 r4
 
 
+
+
          add r6 r1 r2
          copy label_1 r6
+
+
 label_2: zjump r1 r2
          label_2
+
+
          stop
 """
                 output  = mach_code(program)
@@ -237,7 +253,7 @@ label_2: zjump r1 r2
                 answer  = bytes.fromhex(answer)
                 self.assertEqual(output, answer)
 
-        def test_data_assem(self):
+        def test_data(self):
                 program = \
 """
          # This is a comment.

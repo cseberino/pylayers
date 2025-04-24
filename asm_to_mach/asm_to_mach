@@ -35,4 +35,4 @@ if len(sys.argv) != 2:
 with open(sys.argv[1]) as f:
         assembly_code = f.read()
         machine_code  = assembler.assembler(assembly_code)
-        print(machine_code)
+        sys.stdout.buffer.write(machine_code)

@@ -1,0 +1,234 @@
+#!/usr/bin/env python3
+
+"""
+Copyright 2025 Christian Seberino
+
+This file is part of Pylayers.
+
+Pylayers is free software: you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+Pylayers is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+Pylayers. If not, see <https://www.gnu.org/licenses/>.
+
+________________________________________________________________________________
+
+
+Contains the computer.
+
+Executes machine code in files.  Machine code is composed of instructions and
+data.  Instructions contain commands and their arguments.  Command arguments can
+be registers or data.  Registers store words or four bytes.  The computer also
+stores bytes in memory.  The memory can store 2^20 or a little over one million
+bytes.  Each memory byte has an index referred to as its address.  When
+execution begins, register values are all set to zero and machine code is copied
+into memory beginning at address zero.  Then, the instruction in memory
+beginning at address zero is read and executed.  Instructions require words.
+The first nibbles or four bits of instructions denote commands.  The computer
+has 16 registers so instruction command register arguments also only require
+nibbles.  The process of reading and executing instructions is referred to as
+the instruction cycle.  The first register is referred to as the instruction
+pointer.  Its value specifies memory addresses containing instructions to be
+executed in instruction cycles.  There are six arithmetic and logic commands:
+add, sub, mul, div, and and or.  These all operate on values in registers and
+store their results in registers.  There are two commands that modify the
+instruction pointer if certain conditions are met: zjump and gjump.  The
+condition for zjump is a register value being zero.  The condition for gjump is
+a register value being greater than another register value.  Modifications to
+the instruction pointer are also referred to as jumps.  The copy command copies
+argument data into registers.  The load command copies memory words into
+registers.  The store command copies register words into memory.  Executions
+continue until stop instructions are reached.  All sizes in the computer are
+given in bytes.
+
+Each line in the following table describes one of the twelve instruction types.
+ip, r1, r2 and r3 denote registers.  ip denotes the instruction pointer while
+the rest can be any of the 16 registers.  [r1], [r2] and [r3] denote register
+values.  D denotes three bytes of data.  MW(<address>) denotes the memory words
+beginning at the given addresses.  Arrows point to where the results of
+instruction cycles are stored:
+
+================================================================================
+ command          arguments        execution
+================================================================================
+
+ add              r1, r2, r3       ([r1] + [r2]) % 2^32             ->  r3
+ sub              r1, r2, r3       ([r1] - [r2]) % 2^32             ->  r3
+ mul              r1, r2, r3       ([r1] * [r2]) % 2^32             ->  r3
+ div              r1, r2, r3       ([r1] / [r2]) % 2^32             ->  r3
+ and              r1, r2, r3       [r1] & [r2]                      ->  r3
+ or               r1, r2, r3       [r1] | [r2]                      ->  r3
+ zjump            r1, r2           [r2] - 4 if [r1] = 0    else ip  ->  ip
+ gjump            r1, r2, r3       [r3] - 4 if [r1] > [r2] else ip  ->  ip
+ copy             D,  r1           D                                ->  r1
+ load             r1, r2           MW([r1])                         ->  r2
+ store            r1, r2           [r1]                             ->  MW([r2])
+ stop
+
+================================================================================
+"""
+
+import operator
+import sys
+
+CMDS      = ["add", "sub", "mul", "div", "and_", "or_", "zjump", "gjump",
+                                                "copy", "load", "store", "stop"]
+IP_REG    = 0
+N_REGS    = 16
+NIBB_BITS = 4
+BYTE_BITS = 8
+WORD_SIZE = 4
+MEM_SIZE  = 2 ** 20
+MODULUS   = 2 ** (BYTE_BITS * WORD_SIZE)
+
+if len(sys.argv) != 2:
+        print("Usage: ./computer <machine code file>")
+        sys.exit(0)
+
+def reg_args(inst):
+        """
+        Extracts register numbers from instructions.
+
+        Instructions are encoded in bytearray objets.
+        """
+
+        return inst[0] & 0xf, inst[1] >> NIBB_BITS, inst[1] & 0xf
+
+def _func(cmd):
+        """
+        helper function for arithmetic and logic commands.
+
+        Returns functions implementing commands.
+        """
+
+        def func(inst, regs, memory):
+                a, b, c = reg_args(inst)
+                try:
+                        cmd_    = "floordiv" if cmd == "div" else cmd
+                        regs[c] = getattr(operator, cmd_)(regs[a], regs[b])
+                        regs[c] = regs[c] % MODULUS
+                except ZeroDivisionError:
+                        regs[c] = 0
+
+        return func
+
+for e in ["add", "sub", "mul", "div", "and_", "or_"]:
+        globals()[e] = _func(e)
+
+def zjump(inst, regs, memory):
+        """
+        Modifies the instruction pointer.
+
+        Modifications only occur when a specificed register value is zero.
+        """
+
+        a, b, _      = reg_args(inst)
+        regs[IP_REG] = regs[b] - WORD_SIZE if regs[a] == 0 else regs[IP_REG]
+
+def gjump(inst, regs, memory):
+        """
+        Modifies the instruction pointer.
+
+        Modifications only occur when a specificed register value is greater
+        than another specified register value.
+        """
+
+        a, b, c      = reg_args(inst)
+        cond         = (regs[a] > regs[b])
+        regs[IP_REG] = regs[c] - WORD_SIZE if cond         else regs[IP_REG]
+
+def copy(inst, regs, memory):
+        """
+        Copies data in instructions into registers.
+
+        The data is limited to three bytes.
+        """
+
+        a       = inst[3] & 0xf
+        regs[a] = (int.from_bytes(inst, "big") & 0x0ffffff0) >> NIBB_BITS
+
+def load(inst, regs, memory):
+        """
+        Copies data in memory into registers.
+
+        The data is limited to one word.
+        """
+
+        a, b, _ = reg_args(inst)
+        regs[b] = int.from_bytes(memory[regs[a]:regs[a] + WORD_SIZE], "big")
+
+def store(inst, regs, memory):
+        """
+        Copies data in registers into memory.
+
+        All register data is limited to one word.
+        """
+
+        a, b, _                             = reg_args(inst)
+        memory[regs[b]:regs[b] + WORD_SIZE] = regs[a].to_bytes(WORD_SIZE, "big")
+
+def stop(inst, regs, memory):
+        """
+        Does nothing.
+
+        Leads to the computer stopping.
+        """
+
+        pass
+
+def inst_cycle(regs, memory):
+        """
+        Implements instruction cycles.
+
+        Gets instructions from memory and executes them.  After every
+        instruction cycle the instruction pointer is incremented by the word
+        size.  Returns instruction commands.
+        """
+
+        inst          = memory[regs[IP_REG]:regs[IP_REG] + WORD_SIZE]
+        cmd           = CMDS[inst[0] >> NIBB_BITS]
+        globals()[cmd](inst, regs, memory)
+        regs[IP_REG] += WORD_SIZE
+
+        return cmd
+
+def execute(memory):
+        """
+        Executes instructions in memory until a stop instruction is reached.
+
+        All register values are initially zero.  Returns register values and
+        memory contents which is also referred to as the computer state.
+        """
+
+        regs    = N_REGS * [0]
+        memory  = bytearray(memory)
+        memory += (MEM_SIZE - len(memory)) * bytearray(b"\x00")
+        cmd     = inst_cycle(regs, memory)
+        while cmd != "stop":
+                cmd = inst_cycle(regs, memory)
+
+        return regs, memory
+
+def print_state(state):
+        """
+        Prints computer states.
+
+        Printer register values and memory contents.
+        """
+
+        print("registers:\n")
+        for i, e in enumerate(state[0]):
+                print(f"\t{i:02}: {e:#010x}")
+        print("\nmemory:\n")
+        for i in range(0, len(state[1]), WORD_SIZE):
+                print(f"\t{i:#010x}: 0x{state[1][i:i + WORD_SIZE].hex():0<8}")
+
+with open(sys.argv[1], "rb") as f:
+        state = execute(f.read())
+        print_state(state)
