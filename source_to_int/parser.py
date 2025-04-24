@@ -30,7 +30,4 @@ create this parser.
 import grammar
 import parser_gen
 
-PARSER = parser_gen.parser_gen(grammar.GRAMMAR)
-
-def parser(tokens):
-        return PARSER(tokens)
+parser = parser_gen.parser_gen(grammar.GRAMMAR)
