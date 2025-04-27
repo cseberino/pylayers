@@ -110,8 +110,8 @@ def _func(cmd):
         def func(inst, regs, memory):
                 a, b, c = reg_args(inst)
                 try:
-                        cmd_    = "floordiv" if cmd == "div" else cmd
-                        regs[c] = getattr(operator, cmd_)(regs[a], regs[b])
+                        alf     = "floordiv" if cmd == "div" else cmd
+                        regs[c] = getattr(operator, alf)(regs[a], regs[b])
                         regs[c] = regs[c] % MODULUS
                 except ZeroDivisionError:
                         regs[c] = 0
