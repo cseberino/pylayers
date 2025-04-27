@@ -141,7 +141,7 @@ def gjump(inst, regs, memory):
 
         a, b, c      = reg_args(inst)
         cond         = (regs[a] > regs[b])
-        regs[IP_REG] = regs[c] - WORD_SIZE if cond         else regs[IP_REG]
+        regs[IP_REG] = regs[c] - WORD_SIZE if cond else regs[IP_REG]
 
 def copy(inst, regs, memory):
         """
