@@ -25,12 +25,12 @@ code are composed of instructions and data.  Assembly code has one instruction
 or datum per line.  Assembly code lines may also have labels.  Both assembly
 code and machine code instructions are composed of commands and their arguments.
 Command arguments can be computer registers or data where computer registers are
-devices that store data.  Machine code is composed of bits or zeroes and ones.
+devices that store data.  Machine code is encoded in bits or zeroes and ones.
 Four bits are referred to as nibbles.  Eight bits are referred to as bytes.  32
 bits are referred to as words but different computers may have different word
 sizes.  Assembly code may use hexadecimal representations of data.  This is a
 compact bit representation composed of digits and the first six letters where
-each represents a different nibble.  All sizes in the assembler are given in
+each represents a different nibble.  All named size constants are specified in
 bytes.
 """
 
