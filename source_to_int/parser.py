@@ -20,11 +20,11 @@ ________________________________________________________________________________
 
 Contains the parser.
 
-Parsers covert tokens into abstract syntax trees.  Abstract syntax trees
-are program encodings based on grammars.  Grammars specify valid programs in
-programming languages.  Tools referred to as parser generators exist which can
+Parsers covert tokens into abstract syntax trees.  Abstract syntax trees are
+hierarchical program encodings based on grammars.  Grammars specify valid
+programs in programming languages.  Tools referred to as parser generators
 automatically convert grammars into parsers.  A parser generator is used to
-create this parser.
+create the parser.
 """
 
 import grammar
