@@ -34,7 +34,7 @@ import subprocess
 import string
 import re
 
-FUNC = "<function (eval_{}|prep_args\.<locals>\.func_) at 0x[0-9a-f]*>"
+FUNC = r"<function (eval_{}|prep_args\.<locals>\.func_) at 0x[0-9a-f]*>"
 ENV  = [e for e in dir(eval_) if e.startswith("eval_")]
 ENV  = {(e[len("eval_"):],) : getattr(eval_, e) for e in ENV}
 
