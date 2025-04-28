@@ -43,7 +43,7 @@ def create_interpreter_mod():
         with open("../__interpreter__.py")      as f:
                 contents = f.readlines()
         with open("../__interpreter__.py", "w") as f:
-                f.write("".join(contents[:62] + contents[65:-4]))
+                f.write("".join(contents[:61] + contents[65:-4]))
 
 class Tester(unittest.TestCase):
         def test_type_identifiers(self):
