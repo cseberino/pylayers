@@ -111,7 +111,7 @@ def eval_func(args, env):
         def func(args_, env_, params = args[0], body = args[1:]):
                 if is_var(params):
                         params, args_ = [params], [args_]
-                env__  = env | dict(zip(params, args_))
+                env__ = env | dict(zip(params, args_))
                 for e in body:
                         result = eval_(e, env__)
 
