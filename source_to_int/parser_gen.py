@@ -20,13 +20,13 @@ ________________________________________________________________________________
 
 Contains the parser generator.
 
-Creates code to do all the pattern matching required to adhere to all the
-production rules of grammars to create abstract syntax trees.  The types of
-parsers created are referred to as recursive descent parsers.  The strategy used
-first replaces complex productions with multiple simpler productions.  Parsers
-are then created for these alternate grammars.   The final parsers generated
-will use these intermediate parsers and convert the abstract syntax trees to
-correspond to the original grammars.
+Does all the pattern matching required to adhere to all the production rules of
+grammars to create abstract syntax trees.  The types of parsers created are
+referred to as recursive descent parsers.  The strategy used first replaces
+complex productions with multiple simpler productions in the given grammars.
+Parsers are then created for the modified grammars.  Final parsers are then
+created that modify the abstract syntax tree outputs to correspond to the
+original grammars.
 """
 
 import hashlib
