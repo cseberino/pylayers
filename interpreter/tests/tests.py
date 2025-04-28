@@ -33,17 +33,18 @@ import unittest
 import subprocess
 import string
 import re
+import os
 
 FUNC = r"<function (eval_{}|prep_args\.<locals>\.func_) at 0x[0-9a-f]*>"
 ENV  = [e for e in dir(eval_) if e.startswith("eval_")]
 ENV  = {(e[len("eval_"):],) : getattr(eval_, e) for e in ENV}
 
-def create_interpreter_mod():
-        subprocess.call(["cp", "../interpreter", "../__interpreter__.py"])
-        with open("../__interpreter__.py")      as f:
-                contents = f.readlines()
-        with open("../__interpreter__.py", "w") as f:
-                f.write("".join(contents[:61] + contents[65:-4]))
+with open("../interpreter") as f:
+        with open("../__interpreter__.py", "w") as g:
+                interpreter_ = f.readlines()
+                g.write("".join(interpreter_[:61] + interpreter_[65:-4]))
+import __interpreter__ as interpreter
+os.remove("../__interpreter__.py")
 
 class Tester(unittest.TestCase):
         def test_type_identifiers(self):
@@ -571,10 +572,6 @@ class Tester(unittest.TestCase):
                 self.assertEqual(output, answer)
 
         def test_tokenizer(self):
-                create_interpreter_mod()
-                import __interpreter__ as interpreter
-                subprocess.call(["rm", "../__interpreter__.py"])
-
                 output = interpreter.tokenizer("abc")
                 answer = ["abc"]
                 self.assertEqual(output, answer)
@@ -655,10 +652,6 @@ a
                 self.assertEqual(output, answer)
 
         def test_parser(self):
-                create_interpreter_mod()
-                import __interpreter__ as interpreter
-                subprocess.call(["rm", "../__interpreter__.py"])
-
                 input_ = '23 True "abc"'
                 output = interpreter.parser(interpreter.tokenizer(input_))
                 answer = [23, True, "abc"]
