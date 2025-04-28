@@ -21,7 +21,8 @@ ________________________________________________________________________________
 Contains the tokenizer.
 
 Tokenizers convert programs into tokens.  Tokens are the smallest meaningful
-units of programs.  Examples include if, for, while, {, ], ; and ;.
+units of programs.  Examples include "if", "for", "while", "{", "]", ";" and
+";".
 """
 
 import re
