@@ -26,33 +26,34 @@ Executes machine code in files.  Machine code is composed of instructions and
 data.  Instructions contain commands and their arguments.  Command arguments can
 be registers or data.  Registers store words or four bytes.  The computer also
 stores bytes in memory.  The memory can store 2^20 or a little over one million
-bytes.  Each memory byte has an index referred to as its address.  When
-execution begins, register values are all set to zero and machine code is copied
-into memory beginning at address zero.  Then, the instruction in memory
-beginning at address zero is read and executed.  Instructions require words.
-The first nibbles or four bits of instructions denote commands.  The computer
-has 16 registers so instruction command register arguments also only require
-nibbles.  The process of reading and executing instructions is referred to as
-the instruction cycle.  The first register is referred to as the instruction
-pointer.  Its value specifies memory addresses containing instructions to be
-executed in instruction cycles.  There are six arithmetic and logic commands:
-add, sub, mul, div, and and or.  These all operate on values in registers and
-store their results in registers.  There are two commands that modify the
-instruction pointer if certain conditions are met: zjump and gjump.  The
-condition for zjump is a register value being zero.  The condition for gjump is
-a register value being greater than another register value.  Modifications to
-the instruction pointer are also referred to as jumps.  The copy command copies
-argument data into registers.  The load command copies memory words into
-registers.  The store command copies register words into memory.  Executions
-continue until stop instructions are reached.  All sizes in the computer are
-given in bytes.
+bytes.  Each memory byte has an index referred to as its address.  All the
+values stored in the registers and the memory are referred to as the state of
+the computer.  When execution begins, register values are all set to zero and
+machine code is copied into memory beginning at address zero.  Then, the
+instruction in memory beginning at address zero is read and executed.
+Instructions require words.  The first nibbles or four bits of instructions
+denote commands.  The computer has 16 registers so instruction command register
+arguments also only require nibbles.  The process of reading and executing
+instructions is referred to as the instruction cycle.  The first register is
+referred to as the instruction pointer.  Its value specifies memory addresses
+containing instructions to be executed in instruction cycles.  There are six
+arithmetic and logic commands: add, sub, mul, div, and and or.  These all
+operate on values in registers and store their results in registers.  There are
+two commands that modify the instruction pointer if certain conditions are met:
+zjump and gjump.  The condition for zjump is a register value being zero.  The
+condition for gjump is a register value being greater than another register
+value.  Modifications to the instruction pointer are also referred to as jumps.
+The copy command copies argument data into registers.  The load command copies
+memory words into registers.  The store command copies register words into
+memory.  Executions continue until stop instructions are reached.  All sizes in
+the computer are given in bytes.
 
 Each line in the following table describes one of the twelve instruction types.
 ip, r1, r2 and r3 denote registers.  ip denotes the instruction pointer while
 the rest can be any of the 16 registers.  [r1], [r2] and [r3] denote register
-values.  D denotes three bytes of data.  MW(<address>) denotes the memory words
-beginning at the given addresses.  Arrows point to where the results of
-instruction cycles are stored:
+values.  <datum> denotes up to three bytes.  The m function returns memory words
+beginning at given addresses.  Arrows point to where the results of instruction
+cycles are stored:
 
 ================================================================================
  command          arguments        execution
@@ -66,9 +67,9 @@ instruction cycles are stored:
  or               r1, r2, r3       [r1] | [r2]                      ->  r3
  zjump            r1, r2           [r2] - 4 if [r1] = 0    else ip  ->  ip
  gjump            r1, r2, r3       [r3] - 4 if [r1] > [r2] else ip  ->  ip
- copy             D,  r1           D                                ->  r1
- load             r1, r2           MW([r1])                         ->  r2
- store            r1, r2           [r1]                             ->  MW([r2])
+ copy             <datum>, r1      <datum> zero padded to one word  ->  r1
+ load             r1, r2           m([r1])                          ->  r2
+ store            r1, r2           [r1]                             ->  m([r2])
  stop
 
 ================================================================================
@@ -202,8 +203,8 @@ def execute(memory):
         """
         Executes instructions in memory until a stop instruction is reached.
 
-        All register values are initially zero.  Returns register values and
-        memory contents which is also referred to as the computer state.
+        Register values are initially set to zero.  Returns register and memory
+        values which are also referred to as the state of the computer.
         """
 
         regs    = N_REGS * [0]
@@ -217,7 +218,7 @@ def execute(memory):
 
 def print_state(state):
         """
-        Prints computer states.
+        Prints states of the computer.
 
         Printer register values and memory contents.
         """
