@@ -20,13 +20,14 @@ ________________________________________________________________________________
 
 Contains the grammar.
 
-Specified using a variant of the extended Backus–Naur form (EBNF) format.
-Composed of rules which are referred to as productions.  Production names are on
-the left side of colons.  Production rules are on the right side of colons and
-may span multiple lines.  Production rules can include tokens and production
-names.  Bars specify logical ORs.  Pluses denote one or more.  Asterisks denote
-zero or more.  Brackets denote zero or one.  Parentheses are used to specify
-groups.
+Grammars are language specifications.  This and other grammars are typically
+specified using a variant of the extended Backus–Naur form (EBNF) format.
+Grammars are composed of rules referred to as productions.  In a grammar
+production rule specification line, names are on the left side of colons and
+rules are on the right side of colons possibly spanning multiple lines.
+Production rules can include tokens and production rule names.  Bars specify
+logical ORs.  Pluses denote one or more.  Asterisks denote zero or more.
+Brackets denote zero or one.  Parentheses specify groups.
 """
 
 GRAMMAR = \
