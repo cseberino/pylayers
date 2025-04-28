@@ -22,38 +22,38 @@ ________________________________________________________________________________
 
 Contains the computer.
 
-Executes machine code in files.  Machine code is composed of instructions and
-data.  Instructions contain commands and their arguments.  Command arguments can
-be registers or data.  Registers store words or four bytes.  The computer also
-stores bytes in memory.  The memory can store 2^20 or a little over one million
-bytes.  Each memory byte has an index referred to as its address.  All the
-values stored in the registers and the memory are referred to as the state of
-the computer.  When execution begins, register values are all set to zero and
-machine code is copied into memory beginning at address zero.  Then, the
-instruction in memory beginning at address zero is read and executed.
-Instructions require words.  The first nibbles or four bits of instructions
-denote commands.  The computer has 16 registers so instruction command register
-arguments also only require nibbles.  The process of reading and executing
-instructions is referred to as the instruction cycle.  The first register is
-referred to as the instruction pointer.  Its value specifies memory addresses
-containing instructions to be executed in instruction cycles.  There are six
-arithmetic and logic commands: add, sub, mul, div, and and or.  These all
-operate on values in registers and store their results in registers.  There are
-two commands that modify the instruction pointer if certain conditions are met:
-zjump and gjump.  The condition for zjump is a register value being zero.  The
-condition for gjump is a register value being greater than another register
-value.  Modifications to the instruction pointer are also referred to as jumps.
-The copy command copies argument data into registers.  The load command copies
-memory words into registers.  The store command copies register words into
-memory.  Executions continue until stop instructions are reached.  All sizes in
-the computer are given in bytes.
+Executes machine code in files.  Machine code is composed of four byte words of
+instructions and data.  Instructions contain commands and their arguments.
+Command arguments can be registers or data.  The registers store words.  Bytes
+are also stored in the memory.  The memory can store 2^20 or a little over one
+million bytes.  Each memory byte has an index referred to as its address.  All
+the values stored in the registers and the memory are referred to as the state
+of the computer.  When execution begins, the register values are all set to zero
+and the machine code is copied into the memory beginning at address zero.  Then,
+the instruction word in memory beginning at address zero is read and executed.
+The process of reading and executing instructions is referred to as the
+instruction cycle.  The first nibbles or four bits of instructions denote
+commands.  The computer has 16 registers so instruction command register
+arguments also only require nibbles.  The first register is referred to as the
+instruction pointer.  Its value specifies memory addresses containing
+instructions to be executed in instruction cycles.  There are six arithmetic and
+logic commands: add, sub, mul, div, and and or.  These all operate on values in
+registers and store their results in registers.  There are two commands that
+modify the instruction pointer if certain conditions are met: zjump and gjump.
+The condition for zjump is a register value being zero.  The condition for gjump
+is a register value being greater than another register value.  Modifications to
+the instruction pointer are referred to as jumps.  The copy command copies
+argument data into registers.  The load command copies memory words into
+registers.  The store command copies register words into memory.  Executions
+continue until stop instructions are reached.  All named size constants are
+specified in bytes.
 
 Each line in the following table describes one of the twelve instruction types.
 ip, r1, r2 and r3 denote registers.  ip denotes the instruction pointer while
-the rest can be any of the 16 registers.  [r1], [r2] and [r3] denote register
-values.  <datum> denotes up to three bytes.  The m function returns memory words
-beginning at given addresses.  Arrows point to where the results of instruction
-cycles are stored:
+r1, r2 and r3 can all be any of the 16 registers.  [r1], [r2] and [r3] denote
+the corresponding register values.  <datum> denotes one, two or three bytes.
+The m function returns memory words beginning at given addresses.  Arrows point
+to where the results of instruction cycles are stored:
 
 ================================================================================
  command          arguments        execution
@@ -220,7 +220,7 @@ def print_state(state):
         """
         Prints states of the computer.
 
-        Printer register values and memory contents.
+        Prints register and memory values.
         """
 
         print("registers:\n")

@@ -45,8 +45,7 @@ language except for the following:
         negate
         gt
 
-The first five functions involve special evaluation procedures.  See Lisp
-resources for further details.
+The first five functions involve special evaluation procedures.
 """
 
 import eval_
