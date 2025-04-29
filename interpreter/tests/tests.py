@@ -56,6 +56,16 @@ def run_and_print_all(program):
 
         return output
 
+def run_only(program):
+        with open("__program__", "w") as f:
+                f.write(program)
+        output = subprocess.check_output(["python3",
+                                          "../interpreter",
+                                          "__program__"])
+        os.remove("__program__")
+
+        return output
+
 class Tester(unittest.TestCase):
         def setUp(self):
                 with open("../interpreter") as f:
@@ -2213,6 +2223,53 @@ b'''\
 ((1 2 3))
 '''
                 output  = run_and_print_all(program)
+                self.assertEqual(output, answer)
+
+        def test_with_print(self):
+                program = \
+'''
+(set i 10)
+(set j 20)
+(set k 30)
+(set l (+ (+ i j) k))
+'''
+                answer  = \
+b'''\
+10
+20
+30
+60
+'''
+                output  = run_and_print_all(program)
+                self.assertEqual(output, answer)
+
+                program = \
+'''
+(set i 10)
+(set j 20)
+(set k 30)
+(set l (+ (+ i j) k))
+(print l)
+'''
+                answer  = \
+b'''\
+60
+'''
+                output  = run_only(program)
+                self.assertEqual(output, answer)
+
+                program = \
+'''
+(set i 10)
+(set j 20)
+(set k 30)
+(print (+ (+ i j) k))
+'''
+                answer  = \
+b'''\
+60
+'''
+                output  = run_only(program)
                 self.assertEqual(output, answer)
 
 unittest.main()
