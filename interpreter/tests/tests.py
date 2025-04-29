@@ -42,11 +42,32 @@ ENV  = {(e[len("eval_"):],) : getattr(eval_, e) for e in ENV}
 with open("../interpreter") as f:
         with open("../__interpreter__.py", "w") as g:
                 interpreter_ = f.readlines()
-                g.write("".join(interpreter_[:61] + interpreter_[65:-4]))
+                g.write("".join(interpreter_[:63] + interpreter_[67:-4]))
 import __interpreter__ as interpreter
 os.remove("../__interpreter__.py")
 
+def run_and_print_all(program):
+        with open("__program__", "w") as f:
+                f.write(program)
+        output = subprocess.check_output(["python3",
+                                          "../interpreter_print_all",
+                                          "__program__"])
+        os.remove("__program__")
+
+        return output
+
 class Tester(unittest.TestCase):
+        def setUp(self):
+                with open("../interpreter") as f:
+                        with open("../interpreter_print_all", "w") as g:
+                                interpreter_     = f.readlines()
+                                interpreter_[-1] = interpreter_[-1].replace(   \
+                                                     "e,", '[("print",), e],')
+                                g.write("".join(interpreter_))
+
+        def tearDown(self):
+                os.remove("../interpreter_print_all")
+
         def test_type_identifiers(self):
                 self.assertTrue( eval_.is_var(("abc",)))
                 self.assertTrue( eval_.is_var(("a3",)))
@@ -676,59 +697,38 @@ a
         def test_print_(self):
                 program =  "True"
                 answer  = b"True\n"
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program =  "False"
                 answer  = b"False\n"
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program =  "345"
                 answer  = b"345\n"
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program =  "-26726"
                 answer  = b"-26726\n"
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program =  '"hello"'
                 answer  = b'"hello"\n'
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program =  '"y@H@h \n a \t abc \t kki"'
                 answer  = b'"y@H@h \n a \t abc \t kki"\n'
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program =  '" \t\n\x0b\x0c"'
                 answer  = b'" \t\n\x0b\x0c"\n'
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program =  ' True   False   915   -61   "hello"  '
                 answer  = \
@@ -739,11 +739,8 @@ False
 -61
 "hello"
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program = \
 '''
@@ -761,11 +758,8 @@ b'''\
 6
 5
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program = \
 '''
@@ -817,132 +811,84 @@ False
 True
 False
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program =  "(atom quote)"
                 answer  = b"True\n"
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program =  '(quote (5 "hello" False))'
                 answer  = b'(5 "hello" False)\n'
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program =  "((func (x) (add x 5)) 10)"
                 answer  = b"15\n"
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_interpreter(self):
                 program = "quote"
                 answer  = FUNC.format("quote").encode() + b"\n"
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertTrue(re.match(answer, output))
-                subprocess.call(["rm", "__program__"])
 
                 program = "append"
                 answer  = FUNC.format("append").encode() + b"\n"
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertTrue(re.match(answer, output))
-                subprocess.call(["rm", "__program__"])
 
                 program = "if"
                 answer  = FUNC.format("if").encode() + b"\n"
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertTrue(re.match(answer, output))
-                subprocess.call(["rm", "__program__"])
 
                 program = "rest"
                 answer  = FUNC.format("rest").encode() + b"\n"
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertTrue(re.match(answer, output))
-                subprocess.call(["rm", "__program__"])
 
                 program = "func"
                 answer  = FUNC.format("func").encode() + b"\n"
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertTrue(re.match(answer, output))
-                subprocess.call(["rm", "__program__"])
 
                 program =  '"abc"'
                 answer  = b'"abc"\n'
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program =  '"True"'
                 answer  = b'"True"\n'
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program =  '"False"'
                 answer  = b'"False"\n'
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program =  '"916"'
                 answer  = b'"916"\n'
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program =  '"-179"'
                 answer  = b'"-179"\n'
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program =  '"4abc"'
                 answer  = b'"4abc"\n'
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program =  '""'
                 answer  = b'""\n'
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program = \
 '''
@@ -960,19 +906,13 @@ b'''\
 6
 5
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program =  "(set αβΔ 46) αβΔ"
                 answer  = b"46\n46\n"
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program = \
 '''
@@ -998,19 +938,13 @@ b'''\
 "hello\nthere"
 "hello ) ( \n there"
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program = '"hello\nthere"\n'
                 answer  = b'"hello\nthere"\n'
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_early_binding(self):
                 program = \
@@ -1029,29 +963,20 @@ b'''\
 3
 '''
                 answer  = answer.split(b"\n")
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 output  = output.split(b"\n")[3:]
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_macro(self):
                 program = "macro"
                 answer  = FUNC.format("macro").encode() + b"\n"
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertTrue(re.match(answer, output))
-                subprocess.call(["rm", "__program__"])
 
                 program = "(macro (x) 5)"
                 answer  = FUNC.format("macro.<locals>.macro").encode() + b"\n"
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertTrue(re.match(answer, output))
-                subprocess.call(["rm", "__program__"])
 
                 program = \
 '''
@@ -1081,13 +1006,10 @@ True
 '''
                 answer  = [FUNC.format("macro.<locals>.macro").encode()] +     \
                                    answer.split(b"\n")
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 output  = output.split(b"\n")
                 self.assertTrue(re.match(answer[0], output[0]) and             \
                                                    (output[1:] == answer[1:]))
-                subprocess.call(["rm", "__program__"])
 
         def test_log_and(self):
                 program = \
@@ -1118,11 +1040,8 @@ False
 True
 True
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_log_or(self):
                 program = \
@@ -1153,11 +1072,8 @@ False
 True
 True
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_basic_math(self):
                 program = \
@@ -1200,11 +1116,8 @@ True
 True
 False
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_recursion(self):
                 program = \
@@ -1228,12 +1141,9 @@ b'''\
 5050
 '''
                 answer  = answer.split(b"\n")
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 output  = output.split(b"\n")[1:]
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_mult(self):
                 program = \
@@ -1258,11 +1168,8 @@ b'''\
 600
 5000
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_div(self):
                 program = \
@@ -1297,11 +1204,8 @@ b'''\
 ()
 ()
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_exp(self):
                 program = \
@@ -1366,11 +1270,8 @@ b'''\
 100
 128
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_not(self):
                 program = \
@@ -1393,11 +1294,8 @@ True
 True
 False
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_len(self):
                 program = \
@@ -1416,11 +1314,8 @@ b'''\
 3
 4
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_func_any_len(self):
                 program = \
@@ -1435,11 +1330,8 @@ b'''\
 1
 (2 3 4)
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_index(self):
                 program = \
@@ -1468,11 +1360,8 @@ b'''\
 35
 34
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_dash(self):
                 program = \
@@ -1495,11 +1384,8 @@ b'''\
 -14
 -4
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_block(self):
                 program = \
@@ -1518,11 +1404,8 @@ b'''\
 6
 ()
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_list(self):
                 program = \
@@ -1539,11 +1422,8 @@ b'''\
 ()
 (3 6 12)
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_reverse(self):
                 program = \
@@ -1564,11 +1444,8 @@ b'''\
 ()
 (11 12 13)
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_range(self):
                 program = \
@@ -1589,11 +1466,8 @@ b'''\
 (5 3)
 (5 3 1)
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_extend(self):
                 program = \
@@ -1620,11 +1494,8 @@ b'''\
 (3)
 ()
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_slice(self):
                 program = \
@@ -1693,11 +1564,8 @@ b'''\
 ("d")
 ()
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_map(self):
                 program = \
@@ -1718,11 +1586,8 @@ b'''\
 (True)
 ()
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_zip(self):
                 program = \
@@ -1739,11 +1604,8 @@ b'''\
 ((1 3))
 ()
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_macro_any_len(self):
                 program = \
@@ -1756,12 +1618,9 @@ b'''\
 4
 '''
                 answer  = answer.split(b"\n")
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 output  = output.split(b"\n")[1:]
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program = \
 '''
@@ -1775,12 +1634,9 @@ b'''\
 "bat"
 '''
                 answer  = answer.split(b"\n")
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 output  = output.split(b"\n")[1:]
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program = \
 '''
@@ -1792,12 +1648,9 @@ b'''\
 ("ball" "rock")
 '''
                 answer  = answer.split(b"\n")
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 output  = output.split(b"\n")[1:]
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_while(self):
                 program = \
@@ -1847,11 +1700,8 @@ True
 150
 250
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
                 program = \
 '''
@@ -1875,12 +1725,9 @@ b'''\
 1
 '''
                 answer  = answer.split(b"\n")
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 output  = output.split(b"\n")[1:]
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_second_third_last(self):
                 program = \
@@ -1901,11 +1748,8 @@ b'''\
 "c"
 "d"
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_for(self):
                 program = \
@@ -1953,11 +1797,8 @@ True
 True
 (0 1 8 27 64)
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_evaluation_model(self):
                 program = \
@@ -1991,12 +1832,9 @@ k
 k
 '''
                 answer  = answer.split(b"\n")
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 output  = output.split(b"\n")[2:]
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_no_args(self):
                 program = \
@@ -2009,11 +1847,8 @@ b'''\
 ()
 ()
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_filter(self):
                 program = \
@@ -2028,11 +1863,8 @@ b'''\
 (0 1 2)
 (0)
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_reduce(self):
                 program = \
@@ -2045,11 +1877,8 @@ b'''\
 10
 24
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_macros_inside_functions(self):
                 program = \
@@ -2071,12 +1900,9 @@ b'''\
 b'''\
 56
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 output  = output.split(b"\n")[1] + b"\n"
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_mod(self):
                 program = \
@@ -2137,11 +1963,8 @@ b'''\
 4
 0
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_l_shift(self):
                 program = \
@@ -2160,11 +1983,8 @@ b'''\
 7360
 7392
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_r_shift(self):
                 program = \
@@ -2185,11 +2005,8 @@ b'''\
 7
 7
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_bit_and(self):
                 program = \
@@ -2226,11 +2043,8 @@ b'''\
 0
 1
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_bit_or(self):
                 program = \
@@ -2267,11 +2081,8 @@ b'''\
 1
 1
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_log_xor(self):
                 program = \
@@ -2317,11 +2128,8 @@ False
 False
 False
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_bit_xor(self):
                 program = \
@@ -2358,11 +2166,8 @@ b'''\
 1
 0
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_bit_not(self):
                 program = \
@@ -2385,11 +2190,8 @@ b'''\
 0
 -1
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
         def test_prepend(self):
                 program = \
@@ -2410,10 +2212,7 @@ b'''\
 (())
 ((1 2 3))
 '''
-                with open("__program__", "w") as f: f.write(program)
-                output  = subprocess.check_output(["../interpreter",
-                                                   "__program__"])
+                output  = run_and_print_all(program)
                 self.assertEqual(output, answer)
-                subprocess.call(["rm", "__program__"])
 
 unittest.main()

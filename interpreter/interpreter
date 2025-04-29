@@ -44,8 +44,10 @@ language except for the following:
         add
         negate
         gt
+        print
 
-The first five functions involve special evaluation procedures.
+The first five have special evaluation procedures.  The last one prints
+evaluation results.
 """
 
 import eval_
@@ -113,26 +115,6 @@ def parser(tokens):
 
         return ast
 
-def print_(exp):
-        """
-        Prints expressions.
-
-        Transforms internal expression representations.
-        """
-
-        def transform(exp):
-                exp_ = str(exp)
-                if   isinstance(exp, str):
-                        exp_ = f'"{exp}"'
-                elif isinstance(exp, tuple):
-                        exp_ = exp[0]
-                elif isinstance(exp, list):
-                        exp_ = f"({' '.join([transform(e) for e in exp])})"
-
-                return exp_
-
-        print(transform(exp))
-
 def make_env():
         """
         Creates the environment.
@@ -153,4 +135,4 @@ def make_env():
 env = make_env()
 with open(sys.argv[1]) as f:
         for e in parser(tokenizer(f.read())):
-                print_(eval_.eval_(e, env))
+                eval_.eval_(e, env)

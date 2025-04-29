@@ -218,6 +218,29 @@ def eval_gt(args, env):
 
         return args[0] > args[1]
 
+@prep_args
+def eval_print(args, env):
+        """
+        Implements the print function.
+
+        Prints string representations of expressions and returns expressions.
+        """
+
+        def exp_str(exp):
+                exp_ = str(exp)
+                if   isinstance(exp, str):
+                        exp_ = f'"{exp}"'
+                elif isinstance(exp, tuple):
+                        exp_ = exp[0]
+                elif isinstance(exp, list):
+                        exp_ = f"({' '.join([exp_str(e) for e in exp])})"
+
+                return exp_
+
+        print(exp_str(args[0]))
+
+        return args[0]
+
 def eval_(exp, env):
         """
         Implements the evaluator.
