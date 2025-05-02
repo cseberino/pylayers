@@ -6,7 +6,7 @@ Compilation can be understood as converting source code to intermediate code,
 then to assembly code, and finally, to machine code. Each of these compilation
 stages can be pictorially represented by different layers:
 
-Computers typically only execute machine code. Computer programs referred to as
+Computers only execute machine code. Computer programs referred to as
 interpreters are often however created that execute or "interpret" intermediate
 code.
 
