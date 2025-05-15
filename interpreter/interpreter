@@ -51,69 +51,15 @@ evaluation results.
 """
 
 import eval_
-import re
+import exps
 import sys
 import os
 
-IGNORE_RE = r"(\s|#[^\n]*\n)*"
-BOOL_RE   = r"True|False"
-INT_RE    = r"\-?\d+"
-TOKEN_RE  = r'\(|\)|"[^"]*"|[^"\(\)\s]+'
 LIBRARY   = os.path.dirname(os.path.realpath(__file__)) + "/library"
 
 if len(sys.argv) != 2:
         print("Usage: ./interpreter <intermediate code file>")
         sys.exit(0)
-
-def tokenizer(program):
-        """
-        Converts programs to tokens.
-
-        The tokens are booleans, integers, strings, variables and parentheses.
-        """
-
-        tokens = []
-        index  = 0
-        while index < len(program):
-                index += len(re.match(IGNORE_RE, program[index:]).group(0))
-                token  = re.match(TOKEN_RE, program[index:])
-                if token:
-                        tokens.append(token.group(0))
-                        index += len(token.group(0))
-
-        return tokens
-
-def parser(tokens):
-        """
-        Converts tokens to abstract syntax trees.
-
-        Abtract syntax trees are lists of expression representations.
-        """
-
-        def exp(tokens):
-                token = tokens.pop(0)
-                if token == "(":
-                        exp_ = []
-                        while tokens and (tokens[0] != ")"):
-                                exp_.append(exp(tokens))
-                        tokens.pop(0)
-                else:
-                        if   re.fullmatch(BOOL_RE, token):
-                                exp_ = True if token == "True" else False
-                        elif re.fullmatch(INT_RE,  token):
-                                exp_ = int(token)
-                        elif token[0] == token[-1] == '"':
-                                exp_ = token[1:-1]
-                        else:
-                                exp_ = (token,)
-
-                return exp_
-
-        ast = []
-        while tokens:
-                ast.append(exp(tokens))
-
-        return ast
 
 def make_env():
         """
@@ -127,12 +73,12 @@ def make_env():
         for folder, _, files in os.walk(LIBRARY):
                 for file in files:
                         with open(os.path.join(folder, file)) as f:
-                                for e in parser(tokenizer(f.read())):
+                                for e in exps.exps(f.read()):
                                         eval_.eval_(e, env)
 
         return env
 
 env = make_env()
 with open(sys.argv[1]) as f:
-        for e in parser(tokenizer(f.read())):
+        for e in exps.exps(f.read()):
                 eval_.eval_(e, env)

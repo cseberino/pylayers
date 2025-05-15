@@ -29,6 +29,7 @@ import sys
 sys.path.append("..")
 
 import eval_
+import exps
 import unittest
 import subprocess
 import string
@@ -38,13 +39,6 @@ import os
 FUNC = r"<function (eval_{}|prep_args\.<locals>\.func_) at 0x[0-9a-f]*>"
 ENV  = [e for e in dir(eval_) if e.startswith("eval_")]
 ENV  = {(e[len("eval_"):],) : getattr(eval_, e) for e in ENV}
-
-with open("../interpreter") as f:
-        with open("../__interpreter__.py", "w") as g:
-                interpreter_ = f.readlines()
-                g.write("".join(interpreter_[:63] + interpreter_[67:-4]))
-import __interpreter__ as interpreter
-os.remove("../__interpreter__.py")
 
 def run_and_print_all(program):
         with open("__program__", "w") as f:
@@ -603,25 +597,25 @@ class Tester(unittest.TestCase):
                 self.assertEqual(output, answer)
 
         def test_tokenizer(self):
-                output = interpreter.tokenizer("abc")
+                output = exps.tokenizer("abc")
                 answer = ["abc"]
                 self.assertEqual(output, answer)
 
-                output = interpreter.tokenizer("a b c")
+                output = exps.tokenizer("a b c")
                 answer = ["a", "b", "c"]
                 self.assertEqual(output, answer)
 
-                output = interpreter.tokenizer("a (b c)")
+                output = exps.tokenizer("a (b c)")
                 answer = ["a", "(", "b", "c", ")"]
                 self.assertEqual(output, answer)
 
-                output = interpreter.tokenizer("a (b c) efg (True 34) hij")
+                output = exps.tokenizer("a (b c) efg (True 34) hij")
                 answer = ["a", "(", "b", "c", ")", "efg", "(", "True", "34",
                                                                      ")", "hij"]
                 self.assertEqual(output, answer)
 
                 prog   = 'x "Ala ka" y'
-                output = interpreter.tokenizer(prog)
+                output = exps.tokenizer(prog)
                 answer = ["x", '"Ala ka"', "y"]
                 self.assertEqual(output, answer)
 
@@ -634,7 +628,7 @@ a
 
 
 """
-                output = interpreter.tokenizer(prog)
+                output = exps.tokenizer(prog)
                 answer = ["a", "(", "b", "c", ")", "efg", "(", "True", "34",
                                                                      ")", "hij"]
                 self.assertEqual(output, answer)
@@ -648,7 +642,7 @@ a
 
 
 """
-                output = interpreter.tokenizer(prog)
+                output = exps.tokenizer(prog)
                 answer = ["a", "(", "b", "c", ")", "efg", "(", "True", "34",
                                                          '"Alaska"', ")", "hij"]
                 self.assertEqual(output, answer)
@@ -662,7 +656,7 @@ a
 
 
 """
-                output = interpreter.tokenizer(prog)
+                output = exps.tokenizer(prog)
                 answer = ["a", "(", "b", "c", ")", "efg", "(", "True", "34",
                                                     '"Ala\t ska"', ")", "hij"]
                 self.assertEqual(output, answer)
@@ -676,7 +670,7 @@ a
   " b \r " k
  "hello world"
 """
-                output = interpreter.tokenizer(prog)
+                output = exps.tokenizer(prog)
                 answer = ["a", "(", "b", "c", ")", "efg", "(", "True", "34",
                           '"Ala\t ska"', ")", "hij", '" b \r "', "k",
                           '"hello world"']
@@ -684,17 +678,17 @@ a
 
         def test_parser(self):
                 input_ = '23 True "abc"'
-                output = interpreter.parser(interpreter.tokenizer(input_))
+                output = exps.parser(exps.tokenizer(input_))
                 answer = [23, True, "abc"]
                 self.assertEqual(output, answer)
 
                 input_ = '23 True "abc" (a b c)'
-                output = interpreter.parser(interpreter.tokenizer(input_))
+                output = exps.parser(exps.tokenizer(input_))
                 answer = [23, True, "abc", [("a",), ("b",), ("c",)]]
                 self.assertEqual(output, answer)
 
                 input_ = '23 True "abc" (a b ("hello" True -23 (4)) c)'
-                output = interpreter.parser(interpreter.tokenizer(input_))
+                output = exps.parser(exps.tokenizer(input_))
                 answer = [23,
                           True,
                           "abc",
