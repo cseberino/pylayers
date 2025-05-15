@@ -1,5 +1,5 @@
+import exps
 import eval_
-import interpreter
 import env_
 
 BOOLEAN   = 1 << 28
@@ -37,7 +37,7 @@ def encode_exp(exp):
 
 def asm_code_gen(int_code):
         asm_code  = eval_.EVAL
-        for e in interpreter.parser(interpreter.tokenizer(int_code)):
+        for e in exps.exps(int_code):
                 asm_code += encode_exp(e)
         asm_code += env_.ENV
 
