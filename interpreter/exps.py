@@ -18,9 +18,9 @@ Pylayers. If not, see <https://www.gnu.org/licenses/>.
 ________________________________________________________________________________
 
 
-Contains the exps function which converts programs to expressions.
+Contains the exps function which converts intermediate code to expressions.
 
-Unevaluated programs do not include evaluated functions and macros.
+There are no evaluated functions and macros before evaluation.
 """
 
 import re
@@ -30,18 +30,18 @@ TOKEN_RE  = r'\(|\)|"[^"]*"|[^"\(\)\s]+'
 BOOL_RE   = r"True|False"
 INT_RE    = r"\-?\d+"
 
-def tokenizer(program):
+def tokenizer(int_code):
         """
-        Converts programs to tokens.
+        Converts intermediate code to tokens.
 
         Tokens are expressions or parts of expressions.
         """
 
         tokens = []
         index  = 0
-        while index < len(program):
-                index += len(re.match(IGNORE_RE, program[index:]).group(0))
-                token  = re.match(TOKEN_RE, program[index:])
+        while index < len(int_code):
+                index += len(re.match(IGNORE_RE, int_code[index:]).group(0))
+                token  = re.match(TOKEN_RE, int_code[index:])
                 if token:
                         tokens.append(token.group(0))
                         index += len(token.group(0))
@@ -81,11 +81,11 @@ def parser(tokens):
 
         return ast
 
-def exps(program):
+def exps(int_code):
         """
-        Converts programs into expressions.
+        Converts intermediate code to expressions.
 
         Uses a tokenizer and a parser.
         """
 
-        return parser(tokenizer(program))
+        return parser(tokenizer(int_code))

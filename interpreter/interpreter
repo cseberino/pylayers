@@ -55,7 +55,7 @@ import exps
 import sys
 import os
 
-LIBRARY   = os.path.dirname(os.path.realpath(__file__)) + "/library"
+LIBRARY = os.path.dirname(os.path.realpath(__file__)) + "/library"
 
 if len(sys.argv) != 2:
         print("Usage: ./interpreter <intermediate code file>")
