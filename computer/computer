@@ -220,7 +220,7 @@ def print_state(state):
         """
         Prints states of the computer.
 
-        Prints register and memory values.
+        Computer states are register and memory value sets.
         """
 
         print("registers:\n")
