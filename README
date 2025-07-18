@@ -1,6 +1,7 @@
-Pylayers is a simple, elegant, unified and comprehensive educational system that
+Pylayers is an elegant, unified and comprehensive educational system that
 teaches the fundamentals of software compilation, interpretation and execution
-using Python. Compilation converts source code to intermediate code, then to
+using Python. It is designed for students, teachers and ambitious computer
+programmers. Compilation converts source code to intermediate code, then to
 assembly code, and finally, to machine code. These compilation stages can be
 pictorially represented by layers:
 
@@ -23,5 +24,6 @@ tokenizers, tokens, parsers, productions, abstract syntax trees, registers,
 instruction sets and more. An extensively documented compiler, interpreter and
 computer, all implemented in Python, are provided.
 
-I hope you find Pylayers useful. I the author, Dr. Christian Seberino, welcome
-all questions, comments and suggestions.  My email address is cs@pylayers.org.
+I hope you find Pylayers instructive. I the author, Dr. Christian Seberino,
+welcome all questions, comments and suggestions.  My email address is
+cs@pylayers.org.
