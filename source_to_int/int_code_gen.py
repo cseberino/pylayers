@@ -92,6 +92,33 @@ def exp_(ast):
 
         return result
 
+def exp_iis_(first, rest):
+        if   rest[0][0] == "L_PAREN":
+                result = " ".join([expression(e) for e in rest[1:-1:2]])
+                result = f"({first} {result})"
+                if result.endswith(" )"):
+                        result  = f"{result[:-2]})"
+        elif rest[0][0] == "L_BRACK":
+                if   len(rest) == 3:
+                        if rest[1] == ("COLON", ":"):
+                                result = f"(slice {first} None None)"
+                        else:
+                                arg    = expression(rest[1])
+                                result = f"(index {first} {arg})"
+                elif len(rest) == 4:
+                        if rest[1] == ("COLON", ":"):
+                                arg    = expression(rest[2])
+                                result = f"(slice {first} None {arg})"
+                        else:
+                                arg    = expression(rest[1])
+                                result = f"(slice {first} {arg} None)"
+                else:
+                        arg_1  = expression(rest[1])
+                        arg_2  = expression(rest[3])
+                        result = f"(slice {first} {arg_1} {arg_2})"
+
+        return result
+
 def exp_iis(ast):
         """
         Converts abstract syntax trees to intermediate code.
@@ -106,33 +133,6 @@ def exp_iis(ast):
                                 break
 
                 return beg + end_
-
-        def exp_iis_(first, rest):
-                if   rest[0][0] == "L_PAREN":
-                        result = " ".join([expression(e) for e in rest[1:-1:2]])
-                        result = f"({first} {result})"
-                        if result.endswith(" )"):
-                                result  = f"{result[:-2]})"
-                elif rest[0][0] == "L_BRACK":
-                        if   len(rest) == 3:
-                                if rest[1] == ("COLON", ":"):
-                                        result = f"(slice {first} None None)"
-                                else:
-                                        arg    = expression(rest[1])
-                                        result = f"(index {first} {arg})"
-                        elif len(rest) == 4:
-                                if rest[1] == ("COLON", ":"):
-                                        arg    = expression(rest[2])
-                                        result = f"(slice {first} None {arg})"
-                                else:
-                                        arg    = expression(rest[1])
-                                        result = f"(slice {first} {arg} None)"
-                        else:
-                                arg_1  = expression(rest[1])
-                                arg_2  = expression(rest[3])
-                                result = f"(slice {first} {arg_1} {arg_2})"
-
-                return result
 
         result = exp_(ast[1])
         if len(ast[1:]) > 1:
