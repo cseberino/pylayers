@@ -93,6 +93,12 @@ def exp_(ast):
         return result
 
 def exp_iis_(first, rest):
+        """
+        exp_iis helper function
+
+        Just handles pieces of abstract syntax trees.
+        """
+
         if   rest[0][0] == "L_PAREN":
                 result = " ".join([expression(e) for e in rest[1:-1:2]])
                 result = f"({first} {result})"
