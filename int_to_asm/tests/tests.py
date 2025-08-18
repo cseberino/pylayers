@@ -262,5 +262,3 @@ False
 ()
 """
                 output = comp_state(program)
-
-unittest.main()

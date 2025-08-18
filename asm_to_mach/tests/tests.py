@@ -289,5 +289,3 @@ label_2: zjump r1 r2
                 answer += "ffff0123"
                 answer  = bytes.fromhex(answer)
                 self.assertEqual(output, answer)
-
-unittest.main()

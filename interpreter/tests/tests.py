@@ -2265,5 +2265,3 @@ b'''\
 '''
                 output  = run_only(program)
                 self.assertEqual(output, answer)
-
-unittest.main()

@@ -1193,5 +1193,3 @@ ans_e:  0x0
 	0x000002e8: 0x00000000
 """
                 self.assertEqual(output, answer)
-
-unittest.main()

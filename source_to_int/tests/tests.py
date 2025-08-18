@@ -2953,5 +2953,3 @@ x = 4 + y
                 os.remove(file_)
                 answer  = "(= x (+ 4 y))\n(= x (+ 4 y))"
                 self.assertEqual(output, answer)
-
-unittest.main()
