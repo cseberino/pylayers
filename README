@@ -1,6 +1,6 @@
-Pylayers is an elegant, unified and comprehensive educational system that
-teaches the fundamentals of software compilation, interpretation and execution
-using Python. It is designed for students, teachers and ambitious computer
+Pylayers is an elegant, unified and comprehensive educational system teaching
+the fundamentals of software compilation, interpretation and execution using
+Python. It is designed for students, teachers and ambitious computer
 programmers. Compilation converts source code to intermediate code, then to
 assembly code, and finally, to machine code. These compilation stages can be
 pictorially represented by layers:
@@ -16,7 +16,7 @@ pictorially represented by layers:
          |_________________________________________|
 
 
-Computers only execute machine code. Interpreters can execute ("interpret")
+Computers only execute machine code. Interpreters execute or "interpret"
 intermediate code. Pylayers teaches about these and numerous other related
 topics, all with working Python code, including: intermediate code generators,
 assembly code generators, machine code generators (assemblers), grammars,
